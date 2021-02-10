@@ -12,7 +12,7 @@ import (
 var gitConfig github.Config
 
 var issueCmd = &cobra.Command{
-	Use:   "issue",
+	Use:   "ghissue",
 	Short: "Get list of issues",
 	Long:  "Get the list of issues in the specified repo",
 	Run: func(cmd *cobra.Command, args []string) {
