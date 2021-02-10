@@ -1,0 +1,35 @@
+host: ""
+port: 8081
+header:
+  Content-Type: application/json
+  Access-Control-Allow-Origin: "*"
+  Access-Control-Allow-Credentials: "*"
+responseDir: "."
+services:
+  - prefix: api
+    endpoints:
+      - method: get
+        name: "/v1/register"
+        response:
+          status: 200
+          header:
+            Content-type: application/json
+          body: configs/stubs/response/register.json
+      - method: post
+        name: "/v1/login"
+        matches:
+          - requestBody: configs/stubs/request/login.json
+            response:
+              status: 200
+              header:
+                Content-type: application/json
+              body: configs/stubs/response/loginResponse.json
+  - prefix: health
+    endpoints:
+      - method: get
+        name: "/v1/health"
+        response:
+          status: 200
+          header:
+            Content-type: application/json
+          body: configs/stubs/response/healthResponse.json
