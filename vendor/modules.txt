@@ -4,11 +4,8 @@ github.com/fsnotify/fsnotify
 ## explicit
 github.com/go-chi/chi
 github.com/go-chi/chi/middleware
-# github.com/golang/protobuf v1.4.3
-## explicit
+# github.com/golang/protobuf v1.4.2
 github.com/golang/protobuf/proto
-# github.com/google/go-cmp v0.5.4
-## explicit
 # github.com/google/go-github/v33 v33.0.0
 ## explicit
 github.com/google/go-github/v33/github
@@ -73,8 +70,7 @@ golang.org/x/sys/unix
 # golang.org/x/text v0.3.3
 golang.org/x/text/transform
 golang.org/x/text/unicode/norm
-# google.golang.org/appengine v1.6.7
-## explicit
+# google.golang.org/appengine v1.6.6
 google.golang.org/appengine/internal
 google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore

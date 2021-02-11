@@ -1,5 +1,5 @@
 .idea
 .vscode
 .dist/**
-./configs/**
+./configs/**/**
 .env
