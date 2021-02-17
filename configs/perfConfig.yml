@@ -1,0 +1,27 @@
+Concurrency: 50
+TotalRequest: 300
+Connections: 20
+InfluxDB:
+  Host: "http://localhost:8086"
+  Token: ""
+  Org: "DJ"
+  Bucket: "k6"
+Suite:
+  API: "blog.BlogService.CreateBlog"
+  Host: "localhost:50051"
+  TestName: "Create Blog"
+  RequestBody:
+    blog:
+      id: "97fbd3e2-646e-4cd9-a0e2-e93e43470ca5"
+      author_id: "51f23114-b4ee-429c-9db3-eea1487bc9e4"
+      title: "Hello"
+      content: "Hello"
+  Latency:
+    50: 10
+    75: 18
+    90: 55
+    95: 60
+    99: 70
+  Expected:
+    TotalReqCount:
+    AverageTime:

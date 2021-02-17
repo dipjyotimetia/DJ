@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-func WriteReportToInflux(host, token string, reportDetails *runner.Report) {
-	client := asyncWriteClient(host, token)
-	writeAPI := client.WriteAPI("my-org", "my-bucket")
+func WriteReportToInflux(influxCon map[string]string, reportDetails *runner.Report) {
+	client := asyncWriteClient(influxCon["host"], influxCon["token"])
+	writeAPI := client.WriteAPI(influxCon["org"], influxCon["bucket"])
 	for _, details := range reportDetails.Details {
 		p := influxdb2.NewPoint(
 			"performance",
 			map[string]string{
 				"id":       fmt.Sprintf("rack_%v", uuid.New().ID()),
 				"vendor":   "DJ",
-				"hostname": fmt.Sprintf("host_%v", host),
+				"hostname": fmt.Sprintf("host_%v", influxCon["host"]),
 			},
 			map[string]interface{}{
 				"TimeStamp": details.Timestamp,
@@ -34,7 +34,7 @@ func WriteReportToInflux(host, token string, reportDetails *runner.Report) {
 			map[string]string{
 				"id":       fmt.Sprintf("rack_%v", uuid.New().ID()),
 				"vendor":   "DJ",
-				"hostname": fmt.Sprintf("host_%v", host),
+				"hostname": fmt.Sprintf("host_%v", influxCon["host"]),
 			},
 			map[string]interface{}{
 				"Percentage": latency.Percentage,

@@ -6,24 +6,23 @@ import (
 
 // Config test config
 type Config struct {
-	API          string
-	Host         string
-	TestName     string
-	RequestBody  interface{}
 	Concurrency  uint
 	TotalRequest uint
 	Connections  uint
-	Latency      map[int]int64
-	Expected     Conditions
-	InfluxDB     InfluxDBConnection
+	InfluxDB     map[string]string
+	Suite        []TestSuite
+}
+
+type TestSuite struct {
+	API         string
+	Host        string
+	TestName    string
+	RequestBody map[string]interface{}
+	Latency     map[int]int64
+	Expected    Conditions
 }
 
 type Conditions struct {
 	TotalReqCount uint64
 	AverageTime   time.Duration
-}
-
-type InfluxDBConnection struct {
-	Host  string
-	Token string
 }
