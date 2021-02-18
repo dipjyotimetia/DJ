@@ -16,7 +16,7 @@ var cfgFile string
 var (
 	rootCmd = &cobra.Command{
 		Use:   "dj",
-		Short: "GO Utils",
+		Short: "Command line utility",
 		Long:  "Single solution for common problems",
 	}
 )
