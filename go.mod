@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/bojand/ghz v0.92.0
 	github.com/go-chi/chi v4.1.2+incompatible
-	github.com/golang/protobuf v1.4.2
 	github.com/google/go-github/v33 v33.0.0
 	github.com/google/uuid v1.2.0
 	github.com/influxdata/influxdb-client-go/v2 v2.2.2
@@ -20,7 +19,5 @@ require (
 	golang.org/x/sys v0.0.0-20210216224549-f992740a1bac // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20210212180131-e7f2df4ecc2d // indirect
-	google.golang.org/grpc v1.34.0
-	google.golang.org/protobuf v1.25.0
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	google.golang.org/grpc v1.35.0 // indirect
 )
