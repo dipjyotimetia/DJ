@@ -6,7 +6,7 @@ updates:
       # Check for updates to GitHub Actions every weekday
       interval: "monthly"
 
-  - package-ecosystem: "npm" # See documentation for possible values
+  - package-ecosystem: "gomod" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
