@@ -8,41 +8,37 @@ import (
 	"time"
 )
 
+// WriteReportToInflux send report details to influxdb
 func WriteReportToInflux(influxCon map[string]string, reportDetails *runner.Report) {
-	client := asyncWriteClient(influxCon["host"], influxCon["token"])
-	writeAPI := client.WriteAPI(influxCon["org"], influxCon["bucket"])
-	for _, details := range reportDetails.Details {
-		p := influxdb2.NewPoint(
-			"performance",
+	if influxCon["enabled"] == "Yes" {
+		client := asyncWriteClient(influxCon["host"], influxCon["token"])
+		writeAPI := client.WriteAPI(influxCon["org"], influxCon["bucket"])
+
+		point := influxdb2.NewPoint(
+			"grpc",
 			map[string]string{
 				"id":       fmt.Sprintf("rack_%v", uuid.New().ID()),
 				"vendor":   "DJ",
-				"hostname": fmt.Sprintf("host_%v", influxCon["host"]),
+				"hostname": fmt.Sprintf(influxCon["host"]),
 			},
 			map[string]interface{}{
-				"TimeStamp": details.Timestamp,
-				"Status":    details.Status,
-				"Latency":   details.Latency,
-				"Error":     details.Error,
+				"TestName":            reportDetails.Name,
+				"EndReason":           reportDetails.EndReason,
+				"Date":                reportDetails.Date,
+				"TotalCount":          int(reportDetails.Count),
+				"TotalDuration":       reportDetails.Total,
+				"Average":             reportDetails.Average,
+				"Fastest":             reportDetails.Fastest,
+				"Slowest":             reportDetails.Slowest,
+				"RPS":                 reportDetails.Rps,
+				"ErrorDist":           reportDetails.ErrorDist,
+				"StatusCodeDist":      reportDetails.StatusCodeDist,
+				"LatencyDistribution": reportDetails.LatencyDistribution,
+				"Details":             reportDetails.Details,
 			},
 			time.Now())
-		writeAPI.WritePoint(p)
+		writeAPI.WritePoint(point)
+		writeAPI.Flush()
+		client.Close()
 	}
-	for _, latency := range reportDetails.LatencyDistribution {
-		p := influxdb2.NewPoint(
-			"latency",
-			map[string]string{
-				"id":       fmt.Sprintf("rack_%v", uuid.New().ID()),
-				"vendor":   "DJ",
-				"hostname": fmt.Sprintf("host_%v", influxCon["host"]),
-			},
-			map[string]interface{}{
-				"Percentage": latency.Percentage,
-				"Latency":    latency.Latency,
-			},
-			time.Now())
-		writeAPI.WritePoint(p)
-	}
-	writeAPI.Flush()
-	client.Close()
 }

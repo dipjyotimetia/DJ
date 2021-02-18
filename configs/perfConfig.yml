@@ -2,10 +2,11 @@ Concurrency: 50
 TotalRequest: 300
 Connections: 20
 InfluxDB:
-  Host: "http://localhost:8086"
-  Token: ""
+  Enabled: "No"                  ## Yes if influxdb configured
+  Host: "http://localhost:8086"  ## influxdb url
+  Token: ""                      ## auth token, if any
   Org: "DJ"
-  Bucket: "k6"
+  Bucket: "performance"          ## Bucket name need to create before
 Suite:
   API: "blog.BlogService.CreateBlog"
   Host: "localhost:50051"

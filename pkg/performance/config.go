@@ -13,6 +13,7 @@ type Config struct {
 	Suite        []TestSuite
 }
 
+// TestSuite test suites
 type TestSuite struct {
 	API         string
 	Host        string
@@ -22,6 +23,7 @@ type TestSuite struct {
 	Expected    Conditions
 }
 
+// Conditions expected conditions
 type Conditions struct {
 	TotalReqCount uint64
 	AverageTime   time.Duration
