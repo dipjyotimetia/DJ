@@ -38,6 +38,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(issueCmd)
 	rootCmd.AddCommand(cmdSTUBS)
+	rootCmd.AddCommand(cmdPERF)
 }
 
 func initConfig() {
