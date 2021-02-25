@@ -10,7 +10,7 @@ github.com/deepmap/oapi-codegen/pkg/runtime
 github.com/deepmap/oapi-codegen/pkg/types
 # github.com/fsnotify/fsnotify v1.4.9
 github.com/fsnotify/fsnotify
-# github.com/go-chi/chi v4.1.2+incompatible
+# github.com/go-chi/chi v4.0.2+incompatible
 ## explicit
 github.com/go-chi/chi
 github.com/go-chi/chi/middleware
@@ -106,7 +106,7 @@ go.uber.org/atomic
 go.uber.org/multierr
 # go.uber.org/tools v0.0.0-20190618225709-2cfd321de3ee
 go.uber.org/tools/update-license
-# golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
+# golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83
 ## explicit
 golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp
@@ -122,7 +122,7 @@ golang.org/x/lint/golint
 # golang.org/x/mod v0.4.1
 ## explicit
 golang.org/x/mod/semver
-# golang.org/x/net v0.0.0-20210119194325-5f4716e94777
+# golang.org/x/net v0.0.0-20210224082022-3d97a244fca7
 ## explicit
 golang.org/x/net/context
 golang.org/x/net/context/ctxhttp
@@ -133,14 +133,14 @@ golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/publicsuffix
 golang.org/x/net/trace
-# golang.org/x/oauth2 v0.0.0-20210216194517-16ff1888fd2e
+# golang.org/x/oauth2 v0.0.0-20210220000619-9bb904979d93
 ## explicit
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
-# golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
+# golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 ## explicit
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20210216224549-f992740a1bac
+# golang.org/x/sys v0.0.0-20210225091947-4ada9433c6ea
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
@@ -184,8 +184,7 @@ google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
 google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/urlfetch
-# google.golang.org/genproto v0.0.0-20210212180131-e7f2df4ecc2d
-## explicit
+# google.golang.org/genproto v0.0.0-20200825200019-8632dd797987
 google.golang.org/genproto/googleapis/rpc/status
 google.golang.org/genproto/protobuf/api
 google.golang.org/genproto/protobuf/field_mask
