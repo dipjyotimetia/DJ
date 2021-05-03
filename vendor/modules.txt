@@ -5,7 +5,7 @@ github.com/BurntSushi/toml
 github.com/bojand/ghz/load
 github.com/bojand/ghz/protodesc
 github.com/bojand/ghz/runner
-# github.com/deepmap/oapi-codegen v1.3.13
+# github.com/deepmap/oapi-codegen v1.6.0
 github.com/deepmap/oapi-codegen/pkg/runtime
 github.com/deepmap/oapi-codegen/pkg/types
 # github.com/fsnotify/fsnotify v1.4.9
@@ -49,7 +49,7 @@ github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/influxdata/influxdb-client-go/v2 v2.2.2
+# github.com/influxdata/influxdb-client-go/v2 v2.3.0
 ## explicit
 github.com/influxdata/influxdb-client-go/v2
 github.com/influxdata/influxdb-client-go/v2/api
@@ -144,7 +144,7 @@ golang.org/x/sync/errgroup
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.3
+# golang.org/x/text v0.3.5
 golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
