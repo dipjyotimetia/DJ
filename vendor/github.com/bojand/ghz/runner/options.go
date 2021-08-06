@@ -43,6 +43,7 @@ type RunConfig struct {
 	proto             string
 	importPaths       []string
 	protoset          string
+	protosetBinary    []byte
 	enableCompression bool
 
 	// security settings
@@ -182,6 +183,10 @@ func NewConfig(call, host string, options ...Option) (*RunConfig, error) {
 
 	if c.host == "" {
 		return nil, errors.New("host required")
+	}
+
+	if c.binary && c.streamDynamicMessages {
+		return nil, errors.New("cannot use dynamic messages with binary data")
 	}
 
 	if c.loadSchedule != ScheduleConst &&
@@ -711,6 +716,14 @@ func WithProtoset(protoset string) Option {
 	return func(o *RunConfig) error {
 		protoset = strings.TrimSpace(protoset)
 		o.protoset = protoset
+
+		return nil
+	}
+}
+
+func WithProtosetBinary(b []byte) Option {
+	return func(o *RunConfig) error {
+		o.protosetBinary = b
 
 		return nil
 	}
