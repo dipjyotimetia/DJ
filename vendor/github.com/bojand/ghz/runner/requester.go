@@ -78,6 +78,8 @@ func NewRequester(c *RunConfig) (*Requester, error) {
 		mtd, err = protodesc.GetMethodDescFromProto(c.call, c.proto, c.importPaths)
 	} else if c.protoset != "" {
 		mtd, err = protodesc.GetMethodDescFromProtoSet(c.call, c.protoset)
+	} else if c.protosetBinary != nil {
+		mtd, err = protodesc.GetMethodDescFromProtoSetBinary(c.call, c.protosetBinary)
 	} else {
 		// use reflection to get method descriptor
 		var cc *grpc.ClientConn
@@ -135,7 +137,7 @@ func NewRequester(c *RunConfig) (*Requester, error) {
 	if c.mdProviderFunc != nil {
 		reqr.metadataProvider = c.mdProviderFunc
 	} else {
-		defaultMDProvider, err := newMetadataProvider(reqr.mtd, c.metadata)
+		defaultMDProvider, err := newMetadataProvider(reqr.mtd, c.metadata, c.funcs)
 		if err != nil {
 			return nil, err
 		}
@@ -296,6 +298,18 @@ func (b *Requester) newClientConn(withStatsHandler bool) (*grpc.ClientConn, erro
 		opts = append(opts, grpc.WithAuthority(b.config.authority))
 	}
 
+	if len(b.config.defaultCallOptions) > 0 {
+		opts = append(opts, grpc.WithDefaultCallOptions(b.config.defaultCallOptions...))
+	} else {
+		// increase max receive and send message sizes
+		opts = append(opts,
+			grpc.WithDefaultCallOptions(
+				grpc.MaxCallRecvMsgSize(math.MaxInt32),
+				grpc.MaxCallSendMsgSize(math.MaxInt32),
+			))
+
+	}
+
 	ctx := context.Background()
 	ctx, _ = context.WithTimeout(ctx, b.config.dialTimeout)
 	// cancel is ignored here as connection.Close() is used.
@@ -325,13 +339,6 @@ func (b *Requester) newClientConn(withStatsHandler bool) (*grpc.ClientConn, erro
 		b.config.log.Debugw("Creating client connection", "options", opts)
 	}
 
-	// increase max receive and send message sizes
-	opts = append(opts,
-		grpc.WithDefaultCallOptions(
-			grpc.MaxCallRecvMsgSize(math.MaxInt32),
-			grpc.MaxCallSendMsgSize(math.MaxInt32),
-		))
-
 	if b.config.lbStrategy != "" {
 		opts = append(opts, grpc.WithBalancerName(b.config.lbStrategy))
 	}
@@ -353,10 +360,12 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 
 	errC := make(chan error, b.config.c)
 	done := make(chan struct{})
+	workerTickerDone := make(chan struct{})
 	ticks := make(chan TickValue)
 	counter := Counter{}
 
 	go func() {
+		defer close(workerTickerDone)
 		n := 0
 		wc := 0
 		for tv := range wct {
@@ -424,13 +433,14 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 				}
 				wm.Unlock()
 			}
+			if tv.Done {
+				return
+			}
 		}
 	}()
 
 	go func() {
 		defer close(ticks)
-		defer wt.Finish()
-
 		defer func() {
 			wm.Lock()
 			nw := len(b.workers)
@@ -438,6 +448,11 @@ func (b *Requester) runWorkers(wt load.WorkerTicker, p load.Pacer) error {
 				b.workers[i].Stop()
 			}
 			wm.Unlock()
+		}()
+
+		defer func() {
+			wt.Finish()
+			<-workerTickerDone
 		}()
 
 		began := time.Now()
