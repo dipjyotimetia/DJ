@@ -22,6 +22,9 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	reflectpb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
+
+	// To register the xds resolvers and balancers.
+	_ "google.golang.org/grpc/xds"
 )
 
 // Max size of the buffer of result channel.
@@ -78,6 +81,8 @@ func NewRequester(c *RunConfig) (*Requester, error) {
 		mtd, err = protodesc.GetMethodDescFromProto(c.call, c.proto, c.importPaths)
 	} else if c.protoset != "" {
 		mtd, err = protodesc.GetMethodDescFromProtoSet(c.call, c.protoset)
+	} else if c.protosetBinary != nil {
+		mtd, err = protodesc.GetMethodDescFromProtoSetBinary(c.call, c.protosetBinary)
 	} else {
 		// use reflection to get method descriptor
 		var cc *grpc.ClientConn
@@ -296,6 +301,18 @@ func (b *Requester) newClientConn(withStatsHandler bool) (*grpc.ClientConn, erro
 		opts = append(opts, grpc.WithAuthority(b.config.authority))
 	}
 
+	if len(b.config.defaultCallOptions) > 0 {
+		opts = append(opts, grpc.WithDefaultCallOptions(b.config.defaultCallOptions...))
+	} else {
+		// increase max receive and send message sizes
+		opts = append(opts,
+			grpc.WithDefaultCallOptions(
+				grpc.MaxCallRecvMsgSize(math.MaxInt32),
+				grpc.MaxCallSendMsgSize(math.MaxInt32),
+			))
+
+	}
+
 	ctx := context.Background()
 	ctx, _ = context.WithTimeout(ctx, b.config.dialTimeout)
 	// cancel is ignored here as connection.Close() is used.
@@ -324,13 +341,6 @@ func (b *Requester) newClientConn(withStatsHandler bool) (*grpc.ClientConn, erro
 	if b.config.hasLog {
 		b.config.log.Debugw("Creating client connection", "options", opts)
 	}
-
-	// increase max receive and send message sizes
-	opts = append(opts,
-		grpc.WithDefaultCallOptions(
-			grpc.MaxCallRecvMsgSize(math.MaxInt32),
-			grpc.MaxCallSendMsgSize(math.MaxInt32),
-		))
 
 	if b.config.lbStrategy != "" {
 		opts = append(opts, grpc.WithBalancerName(b.config.lbStrategy))

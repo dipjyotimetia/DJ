@@ -1,12 +1,30 @@
 name: goreleaser
 
 on:
-  pull_request:
   push:
+    tags:
+      - v*
 
 jobs:
   goreleaser:
-    runs-on: ubuntu-latest
+    name: Deploy Release
+    strategy:
+      matrix:
+        target:
+          - linux-x86_64
+          - darwin-x86_64
+          - windows-x86_64
+        include:
+          - target: linux-x86_64
+            os: ubuntu-latest
+            name: dj-linux-x86_64.tar.gz
+          - target: darwin-x86_64
+            os: macOS-latest
+            name: dj-darwin-x86_64.tar.gz
+          - target: windows-x86_64
+            os: windows-latest
+            name: dj-windows-x86_64.zip
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
