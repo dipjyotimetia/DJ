@@ -35,6 +35,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "", "", "config file")
 	_ = viper.BindPFlag("config", rootCmd.PersistentFlags().Lookup("config"))
 	rootCmd.PersistentFlags().StringP("author", "a", "Dipjyoti Metia", "author name for copyright attribution")
+	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(issueCmd)
 	rootCmd.AddCommand(cmdSTUBS)
