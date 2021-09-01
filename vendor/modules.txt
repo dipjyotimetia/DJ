@@ -15,7 +15,7 @@ github.com/cncf/udpa/go/udpa/annotations
 github.com/cncf/udpa/go/udpa/data/orca/v1
 github.com/cncf/udpa/go/udpa/type/v1
 github.com/cncf/udpa/go/xds/core/v3
-# github.com/deepmap/oapi-codegen v1.6.0
+# github.com/deepmap/oapi-codegen v1.8.2
 github.com/deepmap/oapi-codegen/pkg/runtime
 github.com/deepmap/oapi-codegen/pkg/types
 # github.com/dustin/go-humanize v1.0.0
@@ -113,7 +113,7 @@ github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/influxdata/influxdb-client-go/v2 v2.4.0
+# github.com/influxdata/influxdb-client-go/v2 v2.5.0
 ## explicit
 github.com/influxdata/influxdb-client-go/v2
 github.com/influxdata/influxdb-client-go/v2/api
