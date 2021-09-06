@@ -2,7 +2,7 @@
 cloud.google.com/go/compute/metadata
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
-# github.com/bojand/ghz v0.101.0
+# github.com/bojand/ghz v0.102.0
 ## explicit
 github.com/bojand/ghz/load
 github.com/bojand/ghz/protodesc
