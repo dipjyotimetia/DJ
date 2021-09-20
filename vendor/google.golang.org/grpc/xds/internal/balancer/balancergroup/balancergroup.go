@@ -24,7 +24,7 @@ import (
 	"time"
 
 	orcapb "github.com/cncf/udpa/go/udpa/data/orca/v1"
-	"google.golang.org/grpc/xds/internal/client/load"
+	"google.golang.org/grpc/xds/internal/xdsclient/load"
 
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/connectivity"
@@ -183,7 +183,7 @@ type BalancerGroup struct {
 	cc        balancer.ClientConn
 	buildOpts balancer.BuildOptions
 	logger    *grpclog.PrefixLogger
-	loadStore load.PerClusterReporter
+	loadStore load.PerClusterReporter // TODO: delete this, no longer needed. It was used by EDS.
 
 	// stateAggregator is where the state/picker updates will be sent to. It's
 	// provided by the parent balancer, to build a picker with all the

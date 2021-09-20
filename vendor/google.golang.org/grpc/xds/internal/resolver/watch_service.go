@@ -25,7 +25,8 @@ import (
 	"time"
 
 	"google.golang.org/grpc/internal/grpclog"
-	xdsclient "google.golang.org/grpc/xds/internal/client"
+	"google.golang.org/grpc/internal/pretty"
+	"google.golang.org/grpc/xds/internal/xdsclient"
 )
 
 // serviceUpdate contains information received from the LDS/RDS responses which
@@ -53,7 +54,7 @@ type ldsConfig struct {
 // Note that during race (e.g. an xDS response is received while the user is
 // calling cancel()), there's a small window where the callback can be called
 // after the watcher is canceled. The caller needs to handle this case.
-func watchService(c xdsClientInterface, serviceName string, cb func(serviceUpdate, error), logger *grpclog.PrefixLogger) (cancel func()) {
+func watchService(c xdsclient.XDSClient, serviceName string, cb func(serviceUpdate, error), logger *grpclog.PrefixLogger) (cancel func()) {
 	w := &serviceUpdateWatcher{
 		logger:      logger,
 		c:           c,
@@ -69,7 +70,7 @@ func watchService(c xdsClientInterface, serviceName string, cb func(serviceUpdat
 // callback at the right time.
 type serviceUpdateWatcher struct {
 	logger      *grpclog.PrefixLogger
-	c           xdsClientInterface
+	c           xdsclient.XDSClient
 	serviceName string
 	ldsCancel   func()
 	serviceCb   func(serviceUpdate, error)
@@ -82,7 +83,7 @@ type serviceUpdateWatcher struct {
 }
 
 func (w *serviceUpdateWatcher) handleLDSResp(update xdsclient.ListenerUpdate, err error) {
-	w.logger.Infof("received LDS update: %+v, err: %v", update, err)
+	w.logger.Infof("received LDS update: %+v, err: %v", pretty.ToJSON(update), err)
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.closed {
@@ -163,7 +164,7 @@ func (w *serviceUpdateWatcher) updateVirtualHostsFromRDS(update xdsclient.RouteC
 }
 
 func (w *serviceUpdateWatcher) handleRDSResp(update xdsclient.RouteConfigUpdate, err error) {
-	w.logger.Infof("received RDS update: %+v, err: %v", update, err)
+	w.logger.Infof("received RDS update: %+v, err: %v", pretty.ToJSON(update), err)
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	if w.closed {
