@@ -9,6 +9,6 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/influxdata/influxdb-client-go/v2 v2.5.0
 	github.com/spf13/cobra v1.2.1
-	github.com/spf13/viper v1.8.1
-	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5
+	github.com/spf13/viper v1.9.0
+	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
 )
