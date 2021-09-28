@@ -2,7 +2,7 @@
 cloud.google.com/go/compute/metadata
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
-# github.com/bojand/ghz v0.101.0
+# github.com/bojand/ghz v0.103.0
 ## explicit
 github.com/bojand/ghz/load
 github.com/bojand/ghz/protodesc
@@ -125,15 +125,17 @@ github.com/influxdata/influxdb-client-go/v2/internal/write
 github.com/influxdata/influxdb-client-go/v2/log
 # github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839
 github.com/influxdata/line-protocol
-# github.com/jhump/protoreflect v1.5.0
+# github.com/jhump/protoreflect v1.9.0
 github.com/jhump/protoreflect/codec
 github.com/jhump/protoreflect/desc
 github.com/jhump/protoreflect/desc/internal
 github.com/jhump/protoreflect/desc/protoparse
+github.com/jhump/protoreflect/desc/protoparse/ast
 github.com/jhump/protoreflect/dynamic
 github.com/jhump/protoreflect/dynamic/grpcdynamic
 github.com/jhump/protoreflect/grpcreflect
 github.com/jhump/protoreflect/internal
+github.com/jhump/protoreflect/internal/codec
 # github.com/jinzhu/configor v1.1.1
 github.com/jinzhu/configor
 # github.com/magiconair/properties v1.8.5
