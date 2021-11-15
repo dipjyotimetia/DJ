@@ -11,12 +11,11 @@ import (
 	"net/mail"
 	"net/url"
 	"regexp"
-	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
 
-	"google.golang.org/protobuf/types/known/anypb"
+	"github.com/golang/protobuf/ptypes"
 )
 
 // ensure the imports are used
@@ -31,52 +30,17 @@ var (
 	_ = time.Duration(0)
 	_ = (*url.URL)(nil)
 	_ = (*mail.Address)(nil)
-	_ = anypb.Any{}
-	_ = sort.Sort
+	_ = ptypes.DynamicAny{}
 )
 
 // Validate checks the field values on XRayConfig with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
+// proto definition for this message. If any rules are violated, an error is returned.
 func (m *XRayConfig) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on XRayConfig with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in XRayConfigMultiError, or
-// nil if none found.
-func (m *XRayConfig) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *XRayConfig) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetDaemonEndpoint()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, XRayConfigValidationError{
-					field:  "DaemonEndpoint",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, XRayConfigValidationError{
-					field:  "DaemonEndpoint",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetDaemonEndpoint()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetDaemonEndpoint()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return XRayConfigValidationError{
 				field:  "DaemonEndpoint",
@@ -87,36 +51,13 @@ func (m *XRayConfig) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetSegmentName()) < 1 {
-		err := XRayConfigValidationError{
+		return XRayConfigValidationError{
 			field:  "SegmentName",
 			reason: "value length must be at least 1 runes",
 		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
 	}
 
-	if all {
-		switch v := interface{}(m.GetSamplingRuleManifest()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, XRayConfigValidationError{
-					field:  "SamplingRuleManifest",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, XRayConfigValidationError{
-					field:  "SamplingRuleManifest",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetSamplingRuleManifest()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetSamplingRuleManifest()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return XRayConfigValidationError{
 				field:  "SamplingRuleManifest",
@@ -126,26 +67,7 @@ func (m *XRayConfig) validate(all bool) error {
 		}
 	}
 
-	if all {
-		switch v := interface{}(m.GetSegmentFields()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, XRayConfigValidationError{
-					field:  "SegmentFields",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, XRayConfigValidationError{
-					field:  "SegmentFields",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetSegmentFields()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetSegmentFields()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return XRayConfigValidationError{
 				field:  "SegmentFields",
@@ -155,27 +77,8 @@ func (m *XRayConfig) validate(all bool) error {
 		}
 	}
 
-	if len(errors) > 0 {
-		return XRayConfigMultiError(errors)
-	}
 	return nil
 }
-
-// XRayConfigMultiError is an error wrapping multiple validation errors
-// returned by XRayConfig.ValidateAll() if the designated constraints aren't met.
-type XRayConfigMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m XRayConfigMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m XRayConfigMultiError) AllErrors() []error { return m }
 
 // XRayConfigValidationError is the validation error returned by
 // XRayConfig.Validate if the designated constraints aren't met.
@@ -233,48 +136,15 @@ var _ interface {
 
 // Validate checks the field values on XRayConfig_SegmentFields with the rules
 // defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
+// violated, an error is returned.
 func (m *XRayConfig_SegmentFields) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on XRayConfig_SegmentFields with the
-// rules defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// XRayConfig_SegmentFieldsMultiError, or nil if none found.
-func (m *XRayConfig_SegmentFields) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *XRayConfig_SegmentFields) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
-	var errors []error
-
 	// no validation rules for Origin
 
-	if all {
-		switch v := interface{}(m.GetAws()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, XRayConfig_SegmentFieldsValidationError{
-					field:  "Aws",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, XRayConfig_SegmentFieldsValidationError{
-					field:  "Aws",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAws()).(interface{ Validate() error }); ok {
+	if v, ok := interface{}(m.GetAws()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return XRayConfig_SegmentFieldsValidationError{
 				field:  "Aws",
@@ -284,28 +154,8 @@ func (m *XRayConfig_SegmentFields) validate(all bool) error {
 		}
 	}
 
-	if len(errors) > 0 {
-		return XRayConfig_SegmentFieldsMultiError(errors)
-	}
 	return nil
 }
-
-// XRayConfig_SegmentFieldsMultiError is an error wrapping multiple validation
-// errors returned by XRayConfig_SegmentFields.ValidateAll() if the designated
-// constraints aren't met.
-type XRayConfig_SegmentFieldsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m XRayConfig_SegmentFieldsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m XRayConfig_SegmentFieldsMultiError) AllErrors() []error { return m }
 
 // XRayConfig_SegmentFieldsValidationError is the validation error returned by
 // XRayConfig_SegmentFields.Validate if the designated constraints aren't met.
