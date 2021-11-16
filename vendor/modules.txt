@@ -91,7 +91,7 @@ github.com/envoyproxy/protoc-gen-validate/validate
 # github.com/fsnotify/fsnotify v1.5.1
 ## explicit; go 1.13
 github.com/fsnotify/fsnotify
-# github.com/go-chi/chi/v5 v5.0.5
+# github.com/go-chi/chi/v5 v5.0.6
 ## explicit; go 1.14
 github.com/go-chi/chi/v5
 github.com/go-chi/chi/v5/middleware
