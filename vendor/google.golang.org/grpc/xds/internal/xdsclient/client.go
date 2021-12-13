@@ -33,6 +33,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/internal/xds/matcher"
 	"google.golang.org/grpc/xds/internal/httpfilter"
 	"google.golang.org/grpc/xds/internal/xdsclient/load"
@@ -71,12 +72,20 @@ func getAPIClientBuilder(version version.TransportAPI) APIClientBuilder {
 	return nil
 }
 
+// UpdateValidatorFunc performs validations on update structs using
+// context/logic available at the xdsClient layer. Since these validation are
+// performed on internal update structs, they can be shared between different
+// API clients.
+type UpdateValidatorFunc func(interface{}) error
+
 // BuildOptions contains options to be passed to client builders.
 type BuildOptions struct {
 	// Parent is a top-level xDS client which has the intelligence to take
 	// appropriate action based on xDS responses received from the management
 	// server.
 	Parent UpdateHandler
+	// Validator performs post unmarshal validation checks.
+	Validator UpdateValidatorFunc
 	// NodeProto contains the Node proto to be used in xDS requests. The actual
 	// type depends on the transport protocol version used.
 	NodeProto proto.Message
@@ -133,14 +142,14 @@ type loadReportingOptions struct {
 // resource updates from an APIClient for a specific version.
 type UpdateHandler interface {
 	// NewListeners handles updates to xDS listener resources.
-	NewListeners(map[string]ListenerUpdate, UpdateMetadata)
+	NewListeners(map[string]ListenerUpdateErrTuple, UpdateMetadata)
 	// NewRouteConfigs handles updates to xDS RouteConfiguration resources.
-	NewRouteConfigs(map[string]RouteConfigUpdate, UpdateMetadata)
+	NewRouteConfigs(map[string]RouteConfigUpdateErrTuple, UpdateMetadata)
 	// NewClusters handles updates to xDS Cluster resources.
-	NewClusters(map[string]ClusterUpdate, UpdateMetadata)
+	NewClusters(map[string]ClusterUpdateErrTuple, UpdateMetadata)
 	// NewEndpoints handles updates to xDS ClusterLoadAssignment (or tersely
 	// referred to as Endpoints) resources.
-	NewEndpoints(map[string]EndpointsUpdate, UpdateMetadata)
+	NewEndpoints(map[string]EndpointsUpdateErrTuple, UpdateMetadata)
 	// NewConnectionError handles connection errors from the xDS stream. The
 	// error will be reported to all the resource watchers.
 	NewConnectionError(err error)
@@ -251,7 +260,6 @@ type InboundListenerConfig struct {
 // of interest to the registered RDS watcher.
 type RouteConfigUpdate struct {
 	VirtualHosts []*VirtualHost
-
 	// Raw is the resource from the xds response.
 	Raw *anypb.Any
 }
@@ -270,6 +278,24 @@ type VirtualHost struct {
 	// may be unused if the matching Route contains an override for that
 	// filter.
 	HTTPFilterConfigOverride map[string]httpfilter.FilterConfig
+	RetryConfig              *RetryConfig
+}
+
+// RetryConfig contains all retry-related configuration in either a VirtualHost
+// or Route.
+type RetryConfig struct {
+	// RetryOn is a set of status codes on which to retry.  Only Canceled,
+	// DeadlineExceeded, Internal, ResourceExhausted, and Unavailable are
+	// supported; any other values will be omitted.
+	RetryOn      map[codes.Code]bool
+	NumRetries   uint32       // maximum number of retry attempts
+	RetryBackoff RetryBackoff // retry backoff policy
+}
+
+// RetryBackoff describes the backoff policy for retries.
+type RetryBackoff struct {
+	BaseInterval time.Duration // initial backoff duration between attempts
+	MaxInterval  time.Duration // maximum backoff duration
 }
 
 // HashPolicyType specifies the type of HashPolicy from a received RDS Response.
@@ -293,6 +319,25 @@ type HashPolicy struct {
 	Regex             *regexp.Regexp
 	RegexSubstitution string
 }
+
+// RouteAction is the action of the route from a received RDS response.
+type RouteAction int
+
+const (
+	// RouteActionUnsupported are routing types currently unsupported by grpc.
+	// According to A36, "A Route with an inappropriate action causes RPCs
+	// matching that route to fail."
+	RouteActionUnsupported RouteAction = iota
+	// RouteActionRoute is the expected route type on the client side. Route
+	// represents routing a request to some upstream cluster. On the client
+	// side, if an RPC matches to a route that is not RouteActionRoute, the RPC
+	// will fail according to A36.
+	RouteActionRoute
+	// RouteActionNonForwardingAction is the expected route type on the server
+	// side. NonForwardingAction represents when a route will generate a
+	// response directly, without forwarding to an upstream host.
+	RouteActionNonForwardingAction
+)
 
 // Route is both a specification of how to match a request as well as an
 // indication of the action to take upon match.
@@ -321,6 +366,9 @@ type Route struct {
 	// unused if the matching WeightedCluster contains an override for that
 	// filter.
 	HTTPFilterConfigOverride map[string]httpfilter.FilterConfig
+	RetryConfig              *RetryConfig
+
+	RouteAction RouteAction
 }
 
 // WeightedCluster contains settings for an xds RouteAction.WeightedCluster.
@@ -385,6 +433,38 @@ type SecurityConfig struct {
 	RequireClientCert bool
 }
 
+// Equal returns true if sc is equal to other.
+func (sc *SecurityConfig) Equal(other *SecurityConfig) bool {
+	switch {
+	case sc == nil && other == nil:
+		return true
+	case (sc != nil) != (other != nil):
+		return false
+	}
+	switch {
+	case sc.RootInstanceName != other.RootInstanceName:
+		return false
+	case sc.RootCertName != other.RootCertName:
+		return false
+	case sc.IdentityInstanceName != other.IdentityInstanceName:
+		return false
+	case sc.IdentityCertName != other.IdentityCertName:
+		return false
+	case sc.RequireClientCert != other.RequireClientCert:
+		return false
+	default:
+		if len(sc.SubjectAltNameMatchers) != len(other.SubjectAltNameMatchers) {
+			return false
+		}
+		for i := 0; i < len(sc.SubjectAltNameMatchers); i++ {
+			if !sc.SubjectAltNameMatchers[i].Equal(other.SubjectAltNameMatchers[i]) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 // ClusterType is the type of cluster from a received CDS response.
 type ClusterType int
 
@@ -400,6 +480,13 @@ const (
 	// with a different configuration.
 	ClusterTypeAggregate
 )
+
+// ClusterLBPolicyRingHash represents ring_hash lb policy, and also contains its
+// config.
+type ClusterLBPolicyRingHash struct {
+	MinimumRingSize uint64
+	MaximumRingSize uint64
+}
 
 // ClusterUpdate contains information from a received CDS response, which is of
 // interest to the registered CDS watcher.
@@ -422,6 +509,16 @@ type ClusterUpdate struct {
 	// PrioritizedClusterNames is used only for cluster type aggregate. It represents
 	// a prioritized list of cluster names.
 	PrioritizedClusterNames []string
+
+	// LBPolicy is the lb policy for this cluster.
+	//
+	// This only support round_robin and ring_hash.
+	// - if it's nil, the lb policy is round_robin
+	// - if it's not nil, the lb policy is ring_hash, the this field has the config.
+	//
+	// When we add more support policies, this can be made an interface, and
+	// will be set to different types based on the policy type.
+	LBPolicy *ClusterLBPolicyRingHash
 
 	// Raw is the resource from the xds response.
 	Raw *anypb.Any
@@ -591,6 +688,7 @@ func newWithConfig(config *bootstrap.Config, watchExpiryTimeout time.Duration) (
 
 	apiClient, err := newAPIClient(config.TransportAPI, cc, BuildOptions{
 		Parent:    c,
+		Validator: c.updateValidator,
 		NodeProto: config.NodeProto,
 		Backoff:   backoff.DefaultExponential.Backoff,
 		Logger:    c.logger,
@@ -642,6 +740,64 @@ func (c *clientImpl) Close() {
 	c.apiClient.Close()
 	c.cc.Close()
 	c.logger.Infof("Shutdown")
+}
+
+func (c *clientImpl) filterChainUpdateValidator(fc *FilterChain) error {
+	if fc == nil {
+		return nil
+	}
+	return c.securityConfigUpdateValidator(fc.SecurityCfg)
+}
+
+func (c *clientImpl) securityConfigUpdateValidator(sc *SecurityConfig) error {
+	if sc == nil {
+		return nil
+	}
+	if sc.IdentityInstanceName != "" {
+		if _, ok := c.config.CertProviderConfigs[sc.IdentityInstanceName]; !ok {
+			return fmt.Errorf("identitiy certificate provider instance name %q missing in bootstrap configuration", sc.IdentityInstanceName)
+		}
+	}
+	if sc.RootInstanceName != "" {
+		if _, ok := c.config.CertProviderConfigs[sc.RootInstanceName]; !ok {
+			return fmt.Errorf("root certificate provider instance name %q missing in bootstrap configuration", sc.RootInstanceName)
+		}
+	}
+	return nil
+}
+
+func (c *clientImpl) updateValidator(u interface{}) error {
+	switch update := u.(type) {
+	case ListenerUpdate:
+		if update.InboundListenerCfg == nil || update.InboundListenerCfg.FilterChains == nil {
+			return nil
+		}
+
+		fcm := update.InboundListenerCfg.FilterChains
+		for _, dst := range fcm.dstPrefixMap {
+			for _, srcType := range dst.srcTypeArr {
+				if srcType == nil {
+					continue
+				}
+				for _, src := range srcType.srcPrefixMap {
+					for _, fc := range src.srcPortMap {
+						if err := c.filterChainUpdateValidator(fc); err != nil {
+							return err
+						}
+					}
+				}
+			}
+		}
+		return c.filterChainUpdateValidator(fcm.def)
+	case ClusterUpdate:
+		return c.securityConfigUpdateValidator(update.SecurityCfg)
+	default:
+		// We currently invoke this update validation function only for LDS and
+		// CDS updates. In the future, if we wish to invoke it for other xDS
+		// updates, corresponding plumbing needs to be added to those unmarshal
+		// functions.
+	}
+	return nil
 }
 
 // ResourceType identifies resources in a transport protocol agnostic way. These

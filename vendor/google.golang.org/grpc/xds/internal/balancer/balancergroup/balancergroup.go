@@ -23,7 +23,7 @@ import (
 	"sync"
 	"time"
 
-	orcapb "github.com/cncf/udpa/go/udpa/data/orca/v1"
+	orcapb "github.com/cncf/xds/go/xds/data/orca/v3"
 	"google.golang.org/grpc/xds/internal/xdsclient/load"
 
 	"google.golang.org/grpc/balancer"
@@ -101,6 +101,22 @@ func (sbc *subBalancerWrapper) startBalancer() {
 	sbc.balancer = b
 	if sbc.ccState != nil {
 		b.UpdateClientConnState(*sbc.ccState)
+	}
+}
+
+func (sbc *subBalancerWrapper) exitIdle() {
+	b := sbc.balancer
+	if b == nil {
+		return
+	}
+	if ei, ok := b.(balancer.ExitIdler); ok {
+		ei.ExitIdle()
+		return
+	}
+	for sc, b := range sbc.group.scToSubBalancer {
+		if b == sbc {
+			sc.Connect()
+		}
 	}
 }
 
@@ -489,6 +505,17 @@ func (bg *BalancerGroup) Close() {
 		for _, config := range bg.idToBalancerConfig {
 			config.stopBalancer()
 		}
+	}
+	bg.outgoingMu.Unlock()
+}
+
+// ExitIdle should be invoked when the parent LB policy's ExitIdle is invoked.
+// It will trigger this on all sub-balancers, or reconnect their subconns if
+// not supported.
+func (bg *BalancerGroup) ExitIdle() {
+	bg.outgoingMu.Lock()
+	for _, config := range bg.idToBalancerConfig {
+		config.exitIdle()
 	}
 	bg.outgoingMu.Unlock()
 }
