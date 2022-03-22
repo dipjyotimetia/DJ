@@ -7,14 +7,13 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/google/go-github/v43 v43.0.0
 	github.com/google/uuid v1.3.0
-	github.com/influxdata/influxdb-client-go/v2 v2.8.0
+	github.com/influxdata/influxdb-client-go/v2 v2.8.1
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.1
 	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a
 )
 
 require (
-	cloud.google.com/go v0.100.2 // indirect
 	cloud.google.com/go/compute v1.5.0 // indirect
 	github.com/BurntSushi/toml v1.0.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
