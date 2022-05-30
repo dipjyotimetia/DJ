@@ -3,7 +3,7 @@ module github.com/goutils
 go 1.18
 
 require (
-	github.com/bojand/ghz v0.108.0
+	github.com/bojand/ghz v0.109.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/google/go-github/v43 v43.0.0
 	github.com/google/uuid v1.3.0
@@ -15,7 +15,7 @@ require (
 
 require (
 	cloud.google.com/go/compute v1.6.1 // indirect
-	github.com/BurntSushi/toml v1.0.0 // indirect
+	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
