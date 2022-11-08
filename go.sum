@@ -67,8 +67,8 @@ github.com/Masterminds/sprig/v3 v3.2.2/go.mod h1:UoaO7Yp8KlPnJIYWTFkMaqPUYKTfGFP
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/bojand/ghz v0.110.0 h1:P7G26B573UeC+XvRevse5M0tP8cmkG0EQm/kS/eHUjM=
-github.com/bojand/ghz v0.110.0/go.mod h1:pej2JQkTDjMckjsPsIwSVjuup2ZWr0hD/4vUrtGQm18=
+github.com/bojand/ghz v0.111.0 h1:QaF/XdAdYL3xMVhvTXYkHqddY3Wi+x1QIcjO4FWFZGs=
+github.com/bojand/ghz v0.111.0/go.mod h1:pej2JQkTDjMckjsPsIwSVjuup2ZWr0hD/4vUrtGQm18=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/census-instrumentation/opencensus-proto v0.3.0 h1:t/LhUZLVitR1Ow2YOnduCsavhwFUklBMoGVYUCqmCqk=
 github.com/census-instrumentation/opencensus-proto v0.3.0/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
