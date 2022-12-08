@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/bojand/ghz v0.111.0
-	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/google/go-github/v43 v43.0.0
 	github.com/google/uuid v1.3.0
 	github.com/influxdata/influxdb-client-go/v2 v2.12.1
