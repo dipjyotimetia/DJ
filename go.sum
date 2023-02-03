@@ -57,8 +57,8 @@ github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kd
 github.com/apapsch/go-jsonmerge/v2 v2.0.0 h1:axGnT1gRIfimI7gJifB699GoE/oq+F2MU7Dml6nw9rQ=
 github.com/apapsch/go-jsonmerge/v2 v2.0.0/go.mod h1:lvDnEdqiQrp0O42VQGgmlKpxL1AP2+08jFMw88y4klk=
 github.com/bmatcuk/doublestar v1.1.1/go.mod h1:UD6OnuiIn0yFxxA2le/rnRU1G4RaI4UvFv1sNto9p6w=
-github.com/bojand/ghz v0.113.1 h1:B9mCJn5Xr0h40CalqTJJaisXGuxl22jciYk1cNViIiA=
-github.com/bojand/ghz v0.113.1/go.mod h1:74kwbyjM8v55jIjRwEeYRZUfZSbBhV2ToMRtypyA+Ic=
+github.com/bojand/ghz v0.114.0 h1:7VFBFmqEybgNLTZ1+r5s9mJAo4ne4xhQyKuis6koCFQ=
+github.com/bojand/ghz v0.114.0/go.mod h1:74kwbyjM8v55jIjRwEeYRZUfZSbBhV2ToMRtypyA+Ic=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/census-instrumentation/opencensus-proto v0.3.0/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/census-instrumentation/opencensus-proto v0.4.1 h1:iKLQ0xPNFxR/2hzXZMrBo8f1j86j5WHzznCCQxV/b8g=
