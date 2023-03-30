@@ -7,7 +7,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/google/go-github/v43 v43.0.0
 	github.com/google/uuid v1.3.0
-	github.com/influxdata/influxdb-client-go/v2 v2.12.2
+	github.com/influxdata/influxdb-client-go/v2 v2.12.3
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
 	golang.org/x/oauth2 v0.5.0
@@ -55,7 +55,7 @@ require (
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.3.0 // indirect
-	golang.org/x/net v0.6.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.7.0 // indirect
