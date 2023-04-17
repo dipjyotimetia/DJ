@@ -3,7 +3,7 @@ module github.com/goutils
 go 1.19
 
 require (
-	github.com/bojand/ghz v0.114.0
+	github.com/bojand/ghz v0.115.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/google/go-github/v43 v43.0.0
 	github.com/google/uuid v1.3.0
