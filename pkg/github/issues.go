@@ -29,7 +29,7 @@ func ListIssues(token string, owner string, repos string) interface{} {
 			ID:        v.GetID(),
 			Title:     v.GetTitle(),
 			State:     v.GetState(),
-			CreatedAt: v.GetCreatedAt(),
+			CreatedAt: v.GetCreatedAt().Time,
 			URL:       v.GetHTMLURL(),
 		})
 	}
