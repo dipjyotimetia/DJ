@@ -58,8 +58,8 @@ github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafo
 github.com/apapsch/go-jsonmerge/v2 v2.0.0 h1:axGnT1gRIfimI7gJifB699GoE/oq+F2MU7Dml6nw9rQ=
 github.com/apapsch/go-jsonmerge/v2 v2.0.0/go.mod h1:lvDnEdqiQrp0O42VQGgmlKpxL1AP2+08jFMw88y4klk=
 github.com/bmatcuk/doublestar v1.1.1/go.mod h1:UD6OnuiIn0yFxxA2le/rnRU1G4RaI4UvFv1sNto9p6w=
-github.com/bojand/ghz v0.115.0 h1:L5IApM32No8welaZsu5TyHMRca6Y1dBL0RLa27zAGfU=
-github.com/bojand/ghz v0.115.0/go.mod h1:T8thwhfwJP1sXDkdg9YsTBwhDPT0vjFFR2EKgNQwOUA=
+github.com/bojand/ghz v0.117.0 h1:dTMxg+tUcLMw8BYi7vQPjXsrM2DJ20ns53hz1am1SbQ=
+github.com/bojand/ghz v0.117.0/go.mod h1:MXspmKdJie7NAS0IHzqG9X5h6zO3tIRGQ6Tkt8sAwa4=
 github.com/bufbuild/protocompile v0.5.1 h1:mixz5lJX4Hiz4FpqFREJHIXLfaLBntfaJv1h+/jS+Qg=
 github.com/bufbuild/protocompile v0.5.1/go.mod h1:G5iLmavmF4NsYtpZFvE3B/zFch2GIY8+wjsYLR/lc40=
 github.com/bwesterb/go-ristretto v1.2.0/go.mod h1:fUIoIZaG73pV5biE2Blr2xEzDoMj7NFEuV9ekS419A0=
