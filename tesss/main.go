@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// _ = ListIssues("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", "dipjyotimetia", "DJ")
+	// _ = ListIssues("", "dipjyotimetia", "DJ")
 
 	// fmt.Println(pp)
 	CreateIssues("TOKEN", "dipjyotimetia", "DJ")
