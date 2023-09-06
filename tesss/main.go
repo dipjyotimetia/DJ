@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/google/go-github/v53/github"
@@ -11,10 +12,10 @@ import (
 )
 
 func main() {
-	// _ = ListIssues("", "dipjyotimetia", "DJ")
+	ListBatch("TOKEN", "dipjyotimetia", "DJ")
 
 	// fmt.Println(pp)
-	CreateIssues("TOKEN", "dipjyotimetia", "DJ")
+	// CreateIssues(TOKEN, "dipjyotimetia", "DJ")
 
 }
 
@@ -41,17 +42,21 @@ func CreateIssues(token string, owner string, repos string) {
 	ctx := context.Background()
 	client := AuthGithubAPI(ctx, token)
 	issues, _, err := client.Issues.Create(ctx, owner, repos, &github.IssueRequest{
-		Title:  Ptr("New Tracker"),
-		Labels: PtrArr([]string{"storage"}),
-		Body:   Ptr("New test trackers"),
+		Title:    Ptr("New Tracker"),
+		Labels:   PtrArr([]string{"storage"}),
+		Assignee: Ptr("dipjyotimetia"),
+		Body:     Ptr(constructData([]string{"A1234567", "C2342343", "D6575665", "E2342356"})),
 	})
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(issues)
+	fmt.Println(issues.GetNumber())
 }
 
-// Ptr returns a pointer to the provided value.
+func constructData(data []string) string {
+	return strings.Join(data, "\n")
+}
+
 func Ptr[T any](val T) *T {
 	return &val
 }
@@ -64,23 +69,36 @@ func PtrArr[T any](val []T) *[]T {
 func ListIssues(token string, owner string, repos string) interface{} {
 	ctx := context.Background()
 	client := AuthGithubAPI(ctx, token)
-	issues, _, err := client.Issues.ListByRepo(ctx, owner, repos, nil)
+	issues, _, err := client.Issues.ListByRepo(ctx, owner, repos, &github.IssueListByRepoOptions{
+		Labels: []string{"storage"},
+	})
 	if err != nil {
 		log.Println(err)
 	}
+	fmt.Println(issues[0].GetBody())
+	return ""
+}
 
-	var issueList []interface{}
-	for _, v := range issues {
-		issueList = append(issueList, &Issues{
-			ID:        v.GetID(),
-			Title:     v.GetTitle(),
-			State:     v.GetState(),
-			CreatedAt: v.GetCreatedAt().Time,
-			URL:       v.GetHTMLURL(),
-			Body:      v.GetBody(),
-			Author:    v.GetAuthorAssociation(),
-		})
+// ListIssues get list of issues
+func ListBatch(token string, owner string, repos string) {
+	var env string
+	ctx := context.Background()
+	client := AuthGithubAPI(ctx, token)
+	issues, _, err := client.Issues.ListByRepo(ctx, owner, repos, &github.IssueListByRepoOptions{
+		Labels: []string{"batch"},
+	})
+	if err != nil {
+		log.Println(err)
 	}
-	fmt.Println(issueList[0])
-	return issueList
+	for _, v := range issues {
+		if v.GetTitle() == "BatchWindow" {
+			switch strings.ToUpper(v.GetBody()) {
+			case "SIT-L":
+				env = "SIT-L"
+			case "SIT-K":
+				env = "SIT-K"
+			}
+		}
+	}
+	fmt.Println(env)
 }
