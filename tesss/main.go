@@ -11,9 +11,10 @@ import (
 )
 
 func main() {
-	pp := ListIssues("", "", "")
+	// _ = ListIssues("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", "dipjyotimetia", "DJ")
 
-	fmt.Println(pp)
+	// fmt.Println(pp)
+	CreateIssues("TOKEN", "dipjyotimetia", "DJ")
 
 }
 
@@ -33,6 +34,30 @@ type Issues struct {
 	CreatedAt time.Time
 	URL       string
 	Body      string
+	Author    string
+}
+
+func CreateIssues(token string, owner string, repos string) {
+	ctx := context.Background()
+	client := AuthGithubAPI(ctx, token)
+	issues, _, err := client.Issues.Create(ctx, owner, repos, &github.IssueRequest{
+		Title:  Ptr("New Tracker"),
+		Labels: PtrArr([]string{"storage"}),
+		Body:   Ptr("New test trackers"),
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(issues)
+}
+
+// Ptr returns a pointer to the provided value.
+func Ptr[T any](val T) *T {
+	return &val
+}
+
+func PtrArr[T any](val []T) *[]T {
+	return &val
 }
 
 // ListIssues get list of issues
@@ -53,8 +78,9 @@ func ListIssues(token string, owner string, repos string) interface{} {
 			CreatedAt: v.GetCreatedAt().Time,
 			URL:       v.GetHTMLURL(),
 			Body:      v.GetBody(),
+			Author:    v.GetAuthorAssociation(),
 		})
 	}
-	fmt.Println(issueList...)
+	fmt.Println(issueList[0])
 	return issueList
 }
