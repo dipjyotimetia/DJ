@@ -9,7 +9,7 @@ require (
 	github.com/google/uuid v1.5.0
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0
 	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.18.1
+	github.com/spf13/viper v1.18.2
 	golang.org/x/oauth2 v0.15.0
 )
 
