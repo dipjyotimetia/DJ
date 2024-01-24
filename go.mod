@@ -6,7 +6,7 @@ require (
 	github.com/bojand/ghz v0.117.0
 	github.com/go-chi/chi/v5 v5.0.11
 	github.com/google/go-github/v53 v53.2.0
-	github.com/google/uuid v1.5.0
+	github.com/google/uuid v1.6.0
 	github.com/influxdata/influxdb-client-go/v2 v2.13.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
